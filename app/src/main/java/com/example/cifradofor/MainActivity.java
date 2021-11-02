@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Context context;
     TextView text;
     ImageButton mayuscula;
+    TextView salidaTexto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // A-Z
         for (int i = 1; i < 28; i++) {
-            final Button button = new Button(this);
+            Button button = new Button(this);
             button.setText(letters.split("")[i]);
             button.setId(i);
             button.setAllCaps(false);
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mayuscula.setId(mayusId);
         mayuscula.setOnClickListener(this);
         mayuscula.setOnLongClickListener(this);
-        mayuscula.setBackgroundResource(R.drawable.una);
+        mayuscula.setBackgroundResource(R.drawable.normal);
 
 
 
@@ -149,25 +150,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case 30:
                 if (this.longClick) this.updateLetterButton();
                 this.mayus = !this.mayus;
                 this.updateLetterButton();
-                /*
-                if (this.mayus) {
+
+                if(this.mayus){
                     v.setBackgroundResource(R.drawable.una);
                 }else{
                     v.setBackgroundResource(R.drawable.normal);
                 }
-                */
-
                 break;
+
             default:
                 final TextView text = findViewById(R.id.noCifrado);
                 String letter = letters.split("")[v.getId()];
 
                 if (this.mayus) letter = letter.toUpperCase();
-                //mayuscula.setBackgroundResource(R.drawable.normal);
 
                 //solo dejamos 20 letras
                 if (text.getText().length() < 20) {
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }
                 break;
+
         }
     }
 
@@ -193,22 +194,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.mayus = true;
         this.longClick = true;
+        v.setBackgroundResource(R.drawable.todo);
         this.updateLetterButton();
         return true;
+
     }
 
     private void updateLetterButton() {
         for (int i = 1; i < 28; i++) {
-            final Button button = findViewById(i);
+            Button button = findViewById(i);
             button.setAllCaps(this.mayus);
-
         }
 
     }
 
     public void cifrar(View v) {
         text = (TextView) findViewById(R.id.noCifrado);
-        TextView salidaTexto = (TextView) findViewById(R.id.salidaTexto);
+        salidaTexto = (TextView) findViewById(R.id.salidaTexto);
         String selectStr = seleccion.getSelectedItem().toString();
         int selectInt = 0;
         switch (selectStr) {
@@ -244,14 +246,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+        salidaTexto.setText("");
         Cifrado cesar = new Cifrado();
-        salidaTexto.setText(cesar.cifrar(text.getText().toString(), selectInt));
+
+        String[]partes;
+            partes = text.getText().toString().split(" ");
+            for (String parte : partes) {
+                salidaTexto.setText((salidaTexto.getText().toString())+cesar.cifrar(parte, selectInt) + " ");
+
+        }
 
     }
 
     public void descifrar(View v) {
         text = (TextView) findViewById(R.id.noCifrado);
-        TextView salidaTexto = (TextView) findViewById(R.id.salidaTexto);
+        salidaTexto = (TextView) findViewById(R.id.salidaTexto);
         String selectStr = seleccion.getSelectedItem().toString();
         int selectInt = 0;
         switch (selectStr) {
@@ -286,16 +295,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 selectInt = 9;
                 break;
         }
-
+        String guardado=text.getText().toString();
+        salidaTexto.setText("");
         Cifrado cesar = new Cifrado();
-        salidaTexto.setText(cesar.descifrar(salidaTexto.getText().toString(), selectInt));
-        if (text.getText().toString().equals(salidaTexto.getText().toString())){
+        String[]partesdescifrado;
+        partesdescifrado = guardado.split(" ");
+        for (String parte : partesdescifrado) {
+            salidaTexto.setText((salidaTexto.getText().toString())+cesar.descifrar(parte, selectInt) + " ");
 
-            context = getApplicationContext();
-            CharSequence error = "No puedes descifrar mas";
-            int duracion = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, error, duracion);
-            toast.show();
         }
 
     }
@@ -306,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (borrarPos.length() > 0) {
             borrarPos = borrarPos.substring(0, borrarPos.length() - 1);
             text.setText(borrarPos);
+            salidaTexto.setText("");
         } else {
             context = getApplicationContext();
             CharSequence error = "No puedes borrar más";
@@ -316,17 +324,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void espacio(View v){
-       /*
         text = findViewById(R.id.noCifrado);
         text.setText(text.getText().toString()+" ");
-        */
-            context = getApplicationContext();
-            CharSequence error = "Por ahora no tiene funcion";
-            int duracion = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, error, duracion);
-            toast.show();
-
     }
-
 
 }
